@@ -50,9 +50,6 @@ def refresh_tokens(request: Request, refresh_data: RefreshTokenData, response: R
     try:
         session = db.session.query(UserSession).filter_by(refresh_token=refresh_token).one()
     except NoResultFound:
-        print(2)
-        print(refresh_token)
-        exit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="MISSED SESSION",
@@ -64,8 +61,6 @@ def refresh_tokens(request: Request, refresh_data: RefreshTokenData, response: R
     db.session.commit()
 
     if session.fingerprint != refresh_data.fingerprint:
-        print(3)
-
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="INVALID_FINGER_PRINT",
@@ -74,8 +69,6 @@ def refresh_tokens(request: Request, refresh_data: RefreshTokenData, response: R
         )
 
     if session.expires_in < datetime.now():
-        print(4)
-
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="TOKEN_EXPIRED",
